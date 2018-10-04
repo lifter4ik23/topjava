@@ -49,4 +49,38 @@ public class UserMealsUtil {
                         caloriesPerDayMap.get(e.getDateTime().toLocalDate()) > caloriesPerDay))
                 .collect(Collectors.toList());
     }
+
+        public static List<UserMealWithExceed> getFilteredWithExceededByCycle(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+        List<UserMealWithExceed> result = new ArrayList<>();
+        List<UserMeal> filteredByTimeList = new ArrayList<>();
+        Map<LocalDate, Integer> caloriesPerDayMap = new HashMap<>();
+
+        for (UserMeal meal : mealList) {
+            LocalDate mealDate = meal.getDateTime().toLocalDate();
+            LocalTime mealTime = meal.getDateTime().toLocalTime();
+
+            caloriesPerDayMap.put(mealDate, caloriesPerDayMap.getOrDefault(mealDate, 0) + meal.getCalories());
+
+            if (TimeUtil.isBetween(mealTime, startTime, endTime)) {
+                filteredByTimeList.add(meal);
+            }
+        }
+
+        System.out.println(caloriesPerDayMap);
+
+        for (UserMeal meal : filteredByTimeList) {
+            if (caloriesPerDayMap.get(meal.getDateTime().toLocalDate()) > caloriesPerDay) {
+                result.add(new UserMealWithExceed(meal.getDateTime(), meal.getDescription(), meal.getCalories(), true));
+            } else {
+                result.add(new UserMealWithExceed(meal.getDateTime(), meal.getDescription(), meal.getCalories(), false));
+            }
+        }
+
+        for (UserMealWithExceed meal : result) {
+            System.out.println(meal);
+        }
+
+
+        return result;
+    }
 }
