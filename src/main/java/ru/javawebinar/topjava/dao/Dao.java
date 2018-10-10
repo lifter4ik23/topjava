@@ -3,14 +3,14 @@ package ru.javawebinar.topjava.dao;
 
 import java.util.List;
 
-public interface Dao<T> {
-    void add(T elem);
+public interface Dao<T, E> {
+    T add(T elem);
 
-    void update(T elem);
+    T update(T elem);
 
-    void delete(T elem);
+    T delete(int id);
 
     T getById(int id);
 
-    List<T> getList();
+    List<E> getList();
 }

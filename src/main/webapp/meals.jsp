@@ -17,7 +17,6 @@
     <table border="1">
         <thead>
         <tr>
-            <th>ID</th>
             <th>Date/Time</th>
             <th>Description</th>
             <th>Calories</th>
@@ -28,30 +27,49 @@
         <tbody>
         <c:forEach items="${mealList}" var="meal">
             <tr style="${meal.exceed ? 'color:red' : 'color:green'}">
-                <td>${meal.id}</td>
                 <td>${formatter.format(meal.dateTime)}</td>
                 <td>${meal.description}</td>
                 <td>${meal.calories}</td>
-                <td><a href="mealEdit?id=${meal.id}">Edit</a></td>
-                <td><a href="mealEdit?id=${meal.id}&param=del">Delete</a></td>
+                <td><a href="meals?id=${meal.id}&param=edit">Edit</a></td>
+                <td><a href="meals?id=${meal.id}&param=delete">Delete</a></td>
             </tr>
         </c:forEach>
         </tbody>
     </table>
 </c:if>
 
-<br/>
-<form method="post">
-    Дата<input type="date" name="date"/>
-    <br/>
-    Время<input type="time" name="time"/>
-    <br/>
-    Название<input type="text" name="description"/>
-    <br/>
-    Калории<input type="number" name="calories"/>
-    <br/>
-    <br/>
-    <input type="submit" value="Add Meal"/>
-</form>
+<c:choose>
+    <c:when test="${meal == null}">
+        <br/>
+        <form method="post">
+            Дата<input type="date" name="date"/>
+            <br/>
+            Время<input type="time" name="time"/>
+            <br/>
+            Название<input type="text" name="description"/>
+            <br/>
+            Калории<input type="number" name="calories"/>
+            <br/>
+            <br/>
+            <button name="param" type="submit" value="add">Add Meal</button>
+        </form>
+    </c:when>
+    <c:otherwise>
+        <br/>
+        <form method="post">
+            <input type="text" name="id" hidden value="${meal.id}"/>
+            Дата<input type="date" name="date" value="${meal.getDate()}"/>
+            <br/>
+            Время<input type="time" name="time" value="${meal.getTime()}"/>
+            <br/>
+            Название<input type="text" name="description" value="${meal.description}"/>
+            <br/>
+            Калории<input type="number" name="calories" value="${meal.calories}"/>
+            <br/>
+            <br/>
+            <button name="param" type="submit" value="edit">Apply Changes</button>
+        </form>
+    </c:otherwise>
+    </c:choose>
 </body>
 </html>
