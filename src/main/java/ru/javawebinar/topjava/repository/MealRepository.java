@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.function.Predicate;
 
 public interface MealRepository {
-    Meal save(Meal meal);
+    Meal save(Meal meal, int userId);
 
     // false if not found
     boolean delete(int id, int userId);

@@ -2,12 +2,14 @@ package ru.javawebinar.topjava;
 
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 import ru.javawebinar.topjava.web.user.AdminRestController;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.Arrays;
@@ -25,17 +27,9 @@ public class SpringMain {
 
             MealRestController mealRestController = appCtx.getBean(MealRestController.class);
             mealRestController.getAll().forEach(System.out::println);
-
             System.out.println("===========================================");
-
-//            mealRestController.getAllByDate(LocalDate.of(2015, Month.MAY, 30), LocalDate.of(2015, Month.MAY, 30)).forEach(System.out::println);
-
-            mealRestController.getAllUniversal(null, LocalDate.of(2015, Month.MAY, 30), LocalTime.of(2, 0), LocalTime.of(11, 0)).forEach(System.out::println);
-
-//            mealRestController.delete(7);
-
-//            mealRestController.getAll().forEach(System.out::println);
-
+            mealRestController.delete(3);
+            mealRestController.getAll().forEach(System.out::println);
 
         }
     }

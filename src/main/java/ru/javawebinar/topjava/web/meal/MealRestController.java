@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collection;
 
+import static ru.javawebinar.topjava.web.SecurityUtil.authUserCaloriesPerDay;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
@@ -30,26 +31,31 @@ public class MealRestController {
     }
 
     public Collection<MealWithExceed> getAll() {
-        return getAllUniversal(null, null, null, null);
-//        return MealsUtil.getWithExceeded(service.getAll(authUserId(), meal -> true), MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        return MealsUtil.getWithExceeded(service.getAll(authUserId(), meal -> true), authUserCaloriesPerDay());
+//        return getFiltered(null, null, null, null);
     }
 
-    public Collection<MealWithExceed> getAllUniversal(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+    public Collection<MealWithExceed> getFiltered(String startDate, String endDate, String startTime, String endTime) {
         log.info("getAll");
+
+        LocalDate startDateParsed = DateTimeUtil.parseDateFromJsp(startDate);
+        LocalDate endDateParsed = DateTimeUtil.parseDateFromJsp(endDate);
+        LocalTime startTimeParsed = DateTimeUtil.parseTimeFromJsp(startTime);
+        LocalTime endTimeParsed = DateTimeUtil.parseTimeFromJsp(endTime);
 
         Collection<Meal> mealList;
 
-        if (startDate != null && endDate != null) {
-            mealList = service.getAll(authUserId(), meal -> DateTimeUtil.isBetweenByDate(meal.getDate(), startDate, endDate));
+        if (startDateParsed != null && endDateParsed != null) {
+            mealList = service.getAll(authUserId(), meal -> DateTimeUtil.isBetween(meal.getDate(), startDateParsed, endDateParsed));
         } else {
             mealList = service.getAll(authUserId(), meal -> true);
         }
 
-        if (startTime != null && endTime != null) {
-            return MealsUtil.getFilteredWithExceeded(mealList, MealsUtil.DEFAULT_CALORIES_PER_DAY, startTime, endTime);
+        if (startTimeParsed != null && endTimeParsed != null) {
+            return MealsUtil.getFilteredWithExceeded(mealList, authUserCaloriesPerDay(), startTimeParsed, endTimeParsed);
         }
 
-        return MealsUtil.getWithExceeded(mealList, MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        return MealsUtil.getWithExceeded(mealList, authUserCaloriesPerDay());
     }
 
     public Meal get(int id) {
@@ -59,8 +65,11 @@ public class MealRestController {
 
     public Meal create(Meal meal) {
         log.info("create {}", meal);
+        if (meal == null) {
+            return null;
+        }
         checkNew(meal);
-        return service.create(meal);
+        return service.create(meal, authUserId());
     }
 
     public void delete(int id) {
@@ -70,8 +79,11 @@ public class MealRestController {
 
     public void update(Meal meal, int id) {
         log.info("update {} with id={}", meal, id);
+        if (meal == null) {
+            return;
+        }
         assureIdConsistent(meal, id);
-        service.update(meal);
+        service.update(meal, authUserId());
     }
 
 }

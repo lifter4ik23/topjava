@@ -50,22 +50,19 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     @Override
     public User get(int id) {
         log.info("get {}", id);
-
-        if (!repository.containsKey(id)) {
+        User user = repository.get(id);
+        if (user == null) {
             return null;
         }
-
-        return repository.get(id);
+        return user;
     }
 
     @Override
     public User getByEmail(String email) {
         log.info("getByEmail {}", email);
-
         Optional<User> elem = getValues(repository).stream()
                 .filter(user -> user.getEmail().equals(email))
                 .findFirst();
-
         return elem.orElse(null);
     }
 
@@ -73,7 +70,7 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     public List<User> getAll() {
         log.info("getAll");
         List<User> userList = getValues(repository);
-        userList.sort(Comparator.comparing(User::getName));
+        userList.sort(Comparator.comparing(User::getName).thenComparing(User::getId));
         return userList;
     }
 }
