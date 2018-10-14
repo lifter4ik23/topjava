@@ -39,17 +39,17 @@ public class MealRestController {
 
         Collection<Meal> mealList;
 
-        if (startDate == null && endDate == null) {
-            mealList = service.getAll(authUserId(), meal -> true);
-        } else {
+        if (startDate != null && endDate != null) {
             mealList = service.getAll(authUserId(), meal -> DateTimeUtil.isBetweenByDate(meal.getDate(), startDate, endDate));
+        } else {
+            mealList = service.getAll(authUserId(), meal -> true);
         }
 
-        if (startDate == null && endTime == null) {
-           return MealsUtil.getWithExceeded(mealList, MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        if (startTime != null && endTime != null) {
+            return MealsUtil.getFilteredWithExceeded(mealList, MealsUtil.DEFAULT_CALORIES_PER_DAY, startTime, endTime);
         }
 
-        return MealsUtil.getFilteredWithExceeded(mealList, MealsUtil.DEFAULT_CALORIES_PER_DAY, startTime, endTime);
+        return MealsUtil.getWithExceeded(mealList, MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
 
     public Meal get(int id) {

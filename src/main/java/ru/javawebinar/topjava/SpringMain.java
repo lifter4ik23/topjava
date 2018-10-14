@@ -30,7 +30,13 @@ public class SpringMain {
 
 //            mealRestController.getAllByDate(LocalDate.of(2015, Month.MAY, 30), LocalDate.of(2015, Month.MAY, 30)).forEach(System.out::println);
 
-            mealRestController.getAllUniversal(LocalDate.of(2015, Month.MAY, 30), LocalDate.of(2015, Month.MAY, 30), LocalTime.of(2, 0), LocalTime.of(11, 0)).forEach(System.out::println);
+            mealRestController.getAllUniversal(null, LocalDate.of(2015, Month.MAY, 30), LocalTime.of(2, 0), LocalTime.of(11, 0)).forEach(System.out::println);
+
+//            mealRestController.delete(7);
+
+//            mealRestController.getAll().forEach(System.out::println);
+
+
         }
     }
 }

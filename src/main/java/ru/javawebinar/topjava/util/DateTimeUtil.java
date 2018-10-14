@@ -16,6 +16,20 @@ public class DateTimeUtil {
         return ld.compareTo(startDate) >= 0 && ld.compareTo(endDate) <= 0;
     }
 
+    public static LocalDate parseDateFromJsp(String parsed) {
+        if (parsed.equals("")) {
+            return null;
+        }
+        return LocalDate.parse(parsed);
+    }
+
+    public static LocalTime parseTimeFromJsp(String parsed) {
+        if (parsed.equals("")) {
+            return null;
+        }
+        return LocalTime.parse(parsed);
+    }
+
     public static String toString(LocalDateTime ldt) {
         return ldt == null ? "" : ldt.format(DATE_TIME_FORMATTER);
     }
