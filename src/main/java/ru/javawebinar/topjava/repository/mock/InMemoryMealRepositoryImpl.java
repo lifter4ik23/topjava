@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryMealRepositoryImpl implements MealRepository {
-    private Map<Integer, Meal> repository = new ConcurrentHashMap<>();
+    private Map<Integer, Map<Integer, Meal>> repository = new ConcurrentHashMap<>();
     private AtomicInteger counter = new AtomicInteger(0);
 
     {
@@ -28,50 +28,54 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
 
     @Override
     public Meal save(Meal meal, int userId) {
-        meal.setUserId(userId);
+        Map<Integer, Meal> userMeals = repository.get(userId);
+
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
-            repository.put(meal.getId(), meal);
+            if (userMeals == null) {
+                userMeals = new ConcurrentHashMap<>();
+                userMeals.put(meal.getId(), meal);
+                repository.put(userId, userMeals);
+            } else {
+                userMeals.put(meal.getId(), meal);
+            }
             return meal;
         }
-        if (repository.get(meal.getId()).getUserId() == userId) {
-            // treat case: update, but absent in storage
-            return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
-        }
-        return null;
+
+        return userMeals.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
 
     @Override
     public boolean delete(int id, int userId) {
-        Meal meal = repository.get(id);
-        if (meal != null && meal.getUserId() == userId) {
-            repository.remove(id);
-            return true;
-        }
-        return false;
+        Map<Integer, Meal> userMeals = repository.get(userId);
+
+        return userMeals.remove(id) != null;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        Meal meal = repository.get(id);
-        if (meal != null && meal.getUserId() == userId) {
-            return meal;
+        Map<Integer, Meal> userMeals = repository.get(userId);
+        Meal meal = userMeals.get(id);
+        if (meal == null) {
+            return null;
         }
-        return null;
+        return meal;
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        return repository.values().stream()
-                .filter(meal -> meal.getUserId() == userId)
+        Map<Integer, Meal> userMeals = repository.get(userId);
+
+        return userMeals.values().stream()
                 .sorted(Comparator.comparing(Meal::getDate).reversed())
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<Meal> getFiltered(int userId, LocalDate startDate, LocalDate endDate) {
-        return repository.values().stream()
-                .filter(meal -> meal.getUserId() == userId)
+        Map<Integer, Meal> userMeals = repository.get(userId);
+
+        return userMeals.values().stream()
                 .filter(meal -> DateTimeUtil.isBetween(meal.getDate(), startDate, endDate))
                 .sorted(Comparator.comparing(Meal::getDate).reversed())
                 .collect(Collectors.toList());
