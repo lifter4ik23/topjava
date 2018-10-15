@@ -7,12 +7,11 @@ import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealWithExceed;
-import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Collection;
+import java.util.List;
 
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserCaloriesPerDay;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
@@ -30,32 +29,21 @@ public class MealRestController {
         this.service = service;
     }
 
-    public Collection<MealWithExceed> getAll() {
-        return MealsUtil.getWithExceeded(service.getAll(authUserId(), meal -> true), authUserCaloriesPerDay());
-//        return getFiltered(null, null, null, null);
+    public List<MealWithExceed> getAll() {
+        return MealsUtil.getWithExceeded(service.getAll(authUserId()), authUserCaloriesPerDay());
     }
 
-    public Collection<MealWithExceed> getFiltered(String startDate, String endDate, String startTime, String endTime) {
+    public List<MealWithExceed> getFiltered(String startDateToParse, String endDateToParse, String startTimeToParse, String endTimeToParse) {
         log.info("getAll");
 
-        LocalDate startDateParsed = DateTimeUtil.parseDateFromJsp(startDate);
-        LocalDate endDateParsed = DateTimeUtil.parseDateFromJsp(endDate);
-        LocalTime startTimeParsed = DateTimeUtil.parseTimeFromJsp(startTime);
-        LocalTime endTimeParsed = DateTimeUtil.parseTimeFromJsp(endTime);
+        LocalDate startDate = (startDateToParse == null || startDateToParse.equals("")) ? LocalDate.MIN : LocalDate.parse(startDateToParse);
+        LocalDate endDate = (endDateToParse == null || endDateToParse.equals("")) ? LocalDate.MAX : LocalDate.parse(endDateToParse);
+        LocalTime startTime = (startTimeToParse == null || startTimeToParse.equals("")) ? LocalTime.MIN : LocalTime.parse(startTimeToParse);
+        LocalTime endTime = (endTimeToParse == null || endTimeToParse.equals("")) ? LocalTime.MAX : LocalTime.parse(endTimeToParse);
 
-        Collection<Meal> mealList;
+        List<Meal> mealList = service.getFiltered(authUserId(), startDate, endDate);
 
-        if (startDateParsed != null && endDateParsed != null) {
-            mealList = service.getAll(authUserId(), meal -> DateTimeUtil.isBetween(meal.getDate(), startDateParsed, endDateParsed));
-        } else {
-            mealList = service.getAll(authUserId(), meal -> true);
-        }
-
-        if (startTimeParsed != null && endTimeParsed != null) {
-            return MealsUtil.getFilteredWithExceeded(mealList, authUserCaloriesPerDay(), startTimeParsed, endTimeParsed);
-        }
-
-        return MealsUtil.getWithExceeded(mealList, authUserCaloriesPerDay());
+        return MealsUtil.getFilteredWithExceeded(mealList, authUserCaloriesPerDay(), startTime, endTime);
     }
 
     public Meal get(int id) {

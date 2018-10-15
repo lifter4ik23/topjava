@@ -10,8 +10,8 @@ import ru.javawebinar.topjava.util.UsersUtil;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
-import static ru.javawebinar.topjava.util.UsersUtil.getValues;
 
 @Repository
 public class InMemoryUserRepositoryImpl implements UserRepository {
@@ -38,13 +38,8 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     @Override
     public boolean delete(int id) {
         log.info("delete {}", id);
-
-        if (!repository.containsKey(id)) {
-            return false;
-        }
-
-        repository.remove(id);
-        return true;
+        User user = repository.remove(id);
+        return user != null;
     }
 
     @Override
@@ -60,7 +55,7 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     @Override
     public User getByEmail(String email) {
         log.info("getByEmail {}", email);
-        Optional<User> elem = getValues(repository).stream()
+        Optional<User> elem = repository.values().stream()
                 .filter(user -> user.getEmail().equals(email))
                 .findFirst();
         return elem.orElse(null);
@@ -69,8 +64,8 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     @Override
     public List<User> getAll() {
         log.info("getAll");
-        List<User> userList = getValues(repository);
-        userList.sort(Comparator.comparing(User::getName).thenComparing(User::getId));
-        return userList;
+        return repository.values().stream()
+                .sorted(Comparator.comparing(User::getName).thenComparing(User::getId))
+                .collect(Collectors.toList());
     }
 }

@@ -3,10 +3,8 @@ package ru.javawebinar.topjava.util;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 public class UsersUtil {
     public static final List<User> USERS = Arrays.asList(
@@ -20,8 +18,4 @@ public class UsersUtil {
             new User(null, "Misha", "misha@mail.ru", "password", Role.ROLE_ADMIN),
             new User(null, "Habib", "habib2@mail.ru", "password", Role.ROLE_ADMIN)
     );
-
-    public static ArrayList<User> getValues(Map<Integer, User> map) {
-        return new ArrayList<>(map.values());
-    }
 }
