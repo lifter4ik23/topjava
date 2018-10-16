@@ -7,11 +7,13 @@ import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Repository
@@ -42,41 +44,40 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
             return meal;
         }
 
-        return userMeals.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
+        return userMeals != null ? userMeals.computeIfPresent(meal.getId(), (id, oldMeal) -> meal) : null;
     }
 
     @Override
     public boolean delete(int id, int userId) {
         Map<Integer, Meal> userMeals = repository.get(userId);
 
-        return userMeals.remove(id) != null;
+        return userMeals != null && userMeals.remove(id) != null;
     }
 
     @Override
     public Meal get(int id, int userId) {
         Map<Integer, Meal> userMeals = repository.get(userId);
-        Meal meal = userMeals.get(id);
-        if (meal == null) {
-            return null;
-        }
-        return meal;
+
+        return userMeals != null ? userMeals.get((id)) : null;
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        Map<Integer, Meal> userMeals = repository.get(userId);
-
-        return userMeals.values().stream()
-                .sorted(Comparator.comparing(Meal::getDate).reversed())
-                .collect(Collectors.toList());
+        return getFiltered(repository.get(userId), meal -> true);
     }
 
     @Override
     public List<Meal> getFiltered(int userId, LocalDate startDate, LocalDate endDate) {
-        Map<Integer, Meal> userMeals = repository.get(userId);
+        return getFiltered(repository.get(userId), meal -> DateTimeUtil.isBetween(meal.getDate(), startDate, endDate));
+    }
+
+    private List<Meal> getFiltered(Map<Integer, Meal> userMeals, Predicate<Meal> filter) {
+        if (userMeals == null) {
+            return Collections.emptyList();
+        }
 
         return userMeals.values().stream()
-                .filter(meal -> DateTimeUtil.isBetween(meal.getDate(), startDate, endDate))
+                .filter(filter)
                 .sorted(Comparator.comparing(Meal::getDate).reversed())
                 .collect(Collectors.toList());
     }

@@ -27,10 +27,10 @@ public class SpringMain {
 //            System.out.println(adminUserController.getByMail("alex@mail.ru"));
 
             MealRestController mealRestController = appCtx.getBean(MealRestController.class);
-            mealRestController.getAll().forEach(System.out::println);
+//            mealRestController.getAll().forEach(System.out::println);
             System.out.println("===========================================");
-//            mealRestController.delete(7);
-            mealRestController.update(new Meal(1, LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500), 1);
+//            mealRestController.get(7);
+//            mealRestController.update(new Meal(1, LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500), 1);
 //            mealRestController.update(new Meal(7, LocalDateTime.of(2018, Month.MAY, 30, 10, 0), "Завтрак2", 500), 7);
             mealRestController.getAll().forEach(System.out::println);
         }
