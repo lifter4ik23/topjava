@@ -30,6 +30,7 @@ CREATE TABLE meals
   user_id          INTEGER                 NOT NULL,
   date_time        TIMESTAMP               NOT NULL,
   description      VARCHAR                 NOT NULL,
-  calories         INTEGER                 NOT NULL
+  calories         INTEGER                 NOT NULL,
+  CONSTRAINT meals_date_by_user UNIQUE (user_id, date_time)
 );
 CREATE INDEX meals_owner ON meals (user_id);
