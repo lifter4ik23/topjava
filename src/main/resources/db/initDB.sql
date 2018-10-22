@@ -31,6 +31,7 @@ CREATE TABLE meals
   date_time        TIMESTAMP               NOT NULL,
   description      VARCHAR                 NOT NULL,
   calories         INTEGER                 NOT NULL,
-  CONSTRAINT meals_date_by_user UNIQUE (user_id, date_time)
+  CONSTRAINT meals_date_by_user UNIQUE (user_id, date_time),
+  FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 CREATE INDEX meals_owner ON meals (user_id);
