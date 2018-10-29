@@ -44,7 +44,7 @@ public class MealServiceTest {
 
     @AfterClass
     public static void end() {
-        System.out.println(testSummary);
+        log.info(testSummary);
     }
 
     @Rule
@@ -54,10 +54,10 @@ public class MealServiceTest {
     public Stopwatch stopwatch = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
-            String info = String.format("Test %s %s, spent %d microseconds",
-                    description.getMethodName(), "finished", TimeUnit.NANOSECONDS.toMicros(nanos));
-            testSummary += info + '\n';
-            log.info(info);
+            String info = String.format("\n\tTest: %15s \tStatus: finished \tTime spent: %5d ms",
+                    description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
+            testSummary += info;
+            log.debug(info);
         }
     };
 
