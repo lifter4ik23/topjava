@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.service;
 
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
@@ -15,6 +16,13 @@ public interface MealService {
 
     default List<Meal> getBetweenDates(LocalDate startDate, LocalDate endDate, int userId) {
         return getBetweenDateTimes(LocalDateTime.of(startDate, LocalTime.MIN), LocalDateTime.of(endDate, LocalTime.MAX), userId);
+    }
+
+    @Transactional
+    default Meal getWithOwner(int id, int userId) {
+        Meal meal = get(id, userId);
+        System.out.println(meal.getUser());
+        return meal;
     }
 
     List<Meal> getBetweenDateTimes(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId);
