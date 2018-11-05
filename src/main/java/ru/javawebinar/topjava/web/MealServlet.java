@@ -28,6 +28,12 @@ public class MealServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
+
+//        for jvm options
+//        -Dspring.profiles.active=postgres,datajpa
+
+        System.setProperty("spring.profiles.active", "postgres,datajpa");
+
         springContext = new ClassPathXmlApplicationContext("spring/spring-app.xml", "spring/spring-db.xml");
         mealController = springContext.getBean(MealRestController.class);
     }
