@@ -1,17 +1,19 @@
-package ru.javawebinar.topjava.service;
+package ru.javawebinar.topjava.service.datajpa;
 
 import org.junit.Test;
 import org.springframework.test.context.ActiveProfiles;
+import ru.javawebinar.topjava.Profiles;
 import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.service.MealServiceTest;
 
 import static ru.javawebinar.topjava.MealTestData.ADMIN_MEAL1;
 import static ru.javawebinar.topjava.MealTestData.ADMIN_MEAL_ID;
 import static ru.javawebinar.topjava.MealTestData.assertMatch;
 import static ru.javawebinar.topjava.UserTestData.*;
 
-@ActiveProfiles("datajpa")
+@ActiveProfiles(Profiles.DATAJPA)
 public class DataJpaMealServiceTest extends MealServiceTest {
 
     @Test
@@ -19,10 +21,6 @@ public class DataJpaMealServiceTest extends MealServiceTest {
         Meal meal = service.getWithOwner(ADMIN_MEAL_ID, ADMIN_ID);
         User user = meal.getUser();
         assertMatch(meal, ADMIN_MEAL1);
-
-        //Cannot locate field $$_hibernate_interceptor on class ru.javawebinar.topjava.model.User
-//        UserTestData.assertMatch(user, ADMIN);
-
-        UserTestData.assertMatch(ADMIN, user);
+        UserTestData.assertMatch(user, ADMIN);
     }
 }

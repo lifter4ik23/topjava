@@ -27,6 +27,11 @@ public class MealServiceImpl implements MealService {
     }
 
     @Override
+    public Meal getWithOwner(int id, int userId) {
+        return repository.getWithOwner(id, userId);
+    }
+
+    @Override
     public void delete(int id, int userId) {
         checkNotFoundWithId(repository.delete(id, userId), id);
     }

@@ -15,25 +15,23 @@ import java.util.Optional;
 public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
 
     @Override
-    @Transactional
     Meal save(Meal meal);
 
     @Transactional
     @Modifying
-//    @Query(name = Meal.DELETE)
     @Query("DELETE FROM Meal m WHERE m.id=:id AND m.user.id=:userId")
     int delete(@Param("id") int id, @Param("userId") int userId);
 
     @Override
     Optional<Meal> findById(Integer id);
 
-    @Modifying
-//    @Query(name = Meal.ALL_SORTED)
+    @Transactional
+    @Query("SELECT m FROM Meal m JOIN FETCH m.user WHERE m.id=:id AND m.user.id=:userId")
+    Optional<Meal> findByIdWithOwner(@Param("id") Integer id, @Param("userId") Integer userId);
+
     @Query("SELECT m FROM Meal m WHERE m.user.id=:userId ORDER BY m.dateTime DESC")
     List<Meal> findAll(@Param("userId") int userId);
 
-    @Modifying
-//    @Query(name = Meal.GET_BETWEEN)
     @SuppressWarnings("JpaQlInspection")
     @Query("SELECT m FROM Meal m " +
             "WHERE m.user.id=:userId AND m.dateTime BETWEEN :startDate AND :endDate ORDER BY m.dateTime DESC")

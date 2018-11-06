@@ -40,6 +40,11 @@ public class DataJpaMealRepositoryImpl implements MealRepository {
     }
 
     @Override
+    public Meal getWithOwner(int id, int userId) {
+        return crudRepository.findByIdWithOwner(id, userId).orElse(null);
+    }
+
+    @Override
     public List<Meal> getAll(int userId) {
         return crudRepository.findAll(userId);
     }

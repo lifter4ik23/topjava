@@ -18,20 +18,19 @@ public abstract class JdbcMealRepositoryImpl implements MealRepository {
 
     private static final RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
 
-    private final JdbcTemplate jdbcTemplate;
-
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-    private final SimpleJdbcInsert insertMeal;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public JdbcMealRepositoryImpl(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    private SimpleJdbcInsert insertMeal;
+
+    @Autowired
+    public void setInsertMeal() {
         this.insertMeal = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("meals")
                 .usingGeneratedKeyColumns("id");
-
-        this.jdbcTemplate = jdbcTemplate;
-        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
     @Override
@@ -83,7 +82,5 @@ public abstract class JdbcMealRepositoryImpl implements MealRepository {
                 ROW_MAPPER, userId, convertDateTime(startDate), convertDateTime(endDate));
     }
 
-    public Object convertDateTime(LocalDateTime localDateTime) {
-        return localDateTime;
-    }
+    public abstract Object convertDateTime(LocalDateTime localDateTime);
 }
