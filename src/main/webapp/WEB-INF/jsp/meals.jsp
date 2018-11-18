@@ -12,7 +12,7 @@
 <jsp:include page="fragments/bodyHeader.jsp"/>
 <section>
     <h3><spring:message code="meal.title"/></h3>
-    <form method="post" action="filter">
+    <form method="post" action="meals">
         <dl>
             <dt><spring:message code="common.fromDate"/></dt>
             <dd><input type="date" name="startDate" value="${param.startDate}"></dd>
@@ -32,7 +32,7 @@
         <button type="submit"><spring:message code="common.filter"/></button>
     </form>
     <hr/>
-    <a href="mealForm"><spring:message code="meal.add"/></a>
+    <a href="add"><spring:message code="meal.add"/></a>
     <hr/>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
@@ -55,7 +55,7 @@
                 </td>
                 <td>${meal.description}</td>
                 <td>${meal.calories}</td>
-                <td><a href="mealForm?id=${meal.id}"><spring:message code="meal.update"/></a></td>
+                <td><a href="<c:url value='/update/${meal.id}'/>"><spring:message code="meal.update"/></a></td>
                 <td><a href="<c:url value='/delete/${meal.id}'/>"><spring:message code="meal.delete"/></a></td>
             </tr>
         </c:forEach>
