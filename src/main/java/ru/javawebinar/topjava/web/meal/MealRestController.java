@@ -10,10 +10,14 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
+import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE;
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
+import static org.springframework.format.annotation.DateTimeFormat.ISO.TIME;
 
 @RestController
 @RequestMapping(MealRestController.REST_URL)
@@ -57,12 +61,24 @@ public class MealRestController extends AbstractMealController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
+//    @GetMapping(value = "/filter", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public List<MealTo> getBetween(
+//            @RequestParam("startDateTime") @DateTimeFormat(iso = DATE_TIME) LocalDateTime startDateTime,
+//            @RequestParam("endDateTime") @DateTimeFormat(iso = DATE_TIME) LocalDateTime endDateTime) {
+//
+//        return super.getBetween(
+//                startDateTime.toLocalDate(), startDateTime.toLocalTime(),
+//                endDateTime.toLocalDate(), endDateTime.toLocalTime());
+//    }
+
+    @Override
     @GetMapping(value = "/filter", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<MealTo> getBetween(
-            @RequestParam("startDateTime") @DateTimeFormat(iso = DATE_TIME) LocalDateTime startDateTime,
-            @RequestParam("endDateTime") @DateTimeFormat(iso = DATE_TIME) LocalDateTime endDateTime) {
-        return super.getBetween(
-                startDateTime.toLocalDate(), startDateTime.toLocalTime(),
-                endDateTime.toLocalDate(), endDateTime.toLocalTime());
+            @RequestParam(value = "startDate", required = false) /*@DateTimeFormat(iso = DATE)*/ LocalDate startDate,
+            @RequestParam(value = "startTime", required = false) /*@DateTimeFormat(iso = TIME)*/ LocalTime startTime,
+            @RequestParam(value = "endDate", required = false) /*@DateTimeFormat(iso = DATE)*/ LocalDate endDate,
+            @RequestParam(value = "endTime", required = false) /*@DateTimeFormat(iso = TIME)*/ LocalTime endTime) {
+
+        return super.getBetween(startDate, startTime, endDate, endTime);
     }
 }
