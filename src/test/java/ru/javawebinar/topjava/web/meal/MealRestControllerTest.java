@@ -7,6 +7,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import ru.javawebinar.topjava.TestUtil;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
+import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
@@ -15,8 +16,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.TestUtil.contentJson;
 import static ru.javawebinar.topjava.TestUtil.readFromJson;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
+import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
+import static ru.javawebinar.topjava.util.MealsUtil.createWithExcess;
 
 class MealRestControllerTest extends AbstractControllerTest {
 
@@ -30,7 +34,7 @@ class MealRestControllerTest extends AbstractControllerTest {
         TestUtil.print(mockMvc.perform(get(REST_URL))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(contentJson(MEAL6, MEAL5, MEAL4, MEAL3, MEAL2, MEAL1)));
+                .andExpect(contentJson(MealsUtil.getWithExcess(MEALS, DEFAULT_CALORIES_PER_DAY))));
     }
 
     @Test
@@ -80,7 +84,10 @@ class MealRestControllerTest extends AbstractControllerTest {
 //        mockMvc.perform(get(REST_URL + "filter?startDateTime=2015-05-30T09:00&endDateTime=2015-05-30T20:00"))
 //                .andExpect(status().isOk())
 //                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-//                .andExpect(contentJson(MEAL3, MEAL2, MEAL1));
+//                .andExpect(contentJson(
+//                        createWithExcess(MEAL3, false),
+//                        createWithExcess(MEAL2, false),
+//                        createWithExcess(MEAL1, false)));
 //    }
 
     @Test
@@ -88,6 +95,9 @@ class MealRestControllerTest extends AbstractControllerTest {
         mockMvc.perform(get(REST_URL + "filter?startDate=&startTime=09:00&endDate=2015-05-30"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(contentJson(MEAL3, MEAL2, MEAL1));
+                .andExpect(contentJson(
+                        createWithExcess(MEAL3, false),
+                        createWithExcess(MEAL2, false),
+                        createWithExcess(MEAL1, false)));
     }
 }

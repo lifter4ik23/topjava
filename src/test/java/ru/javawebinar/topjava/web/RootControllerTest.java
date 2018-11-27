@@ -1,14 +1,16 @@
 package ru.javawebinar.topjava.web;
 
 import org.junit.jupiter.api.Test;
+import ru.javawebinar.topjava.util.MealsUtil;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static ru.javawebinar.topjava.MealTestData.MEALS;
 import static ru.javawebinar.topjava.UserTestData.USER;
-import static ru.javawebinar.topjava.MealTestData.MEAL1;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
+import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
 
 class RootControllerTest extends AbstractControllerTest {
 
@@ -36,14 +38,6 @@ class RootControllerTest extends AbstractControllerTest {
                 .andExpect(view().name("meals"))
                 .andExpect(forwardedUrl("/WEB-INF/jsp/meals.jsp"))
                 .andExpect(model().attribute("meals", hasSize(6)))
-                .andExpect(model().attribute("meals", hasItem(
-                        allOf(
-                                hasProperty("id", is(START_SEQ + 2)),
-                                hasProperty("description", is(MEAL1.getDescription())),
-                                hasProperty("calories", is(MEAL1.getCalories())),
-                                hasProperty("dateTime", is(MEAL1.getDateTime())),
-                                hasProperty("excess", is(false))
-                        )
-                )));
+                .andExpect(model().attribute("meals", MealsUtil.getWithExcess(MEALS, DEFAULT_CALORIES_PER_DAY)));
     }
 }
